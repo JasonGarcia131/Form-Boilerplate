@@ -1,10 +1,21 @@
-export const RADIOQUESTIONS = [
-  "Radio question 1",
-  "Radio question 2",
-  "Radio question 3"
-    ];
-export const INPUTFIELDS = [
-  "Input 1",
-  "Input 2",
-  "Input 3"
-];
+export const FormData = [
+  {
+    question: "Date",
+    type: "date",
+  },
+  {
+    question: "Time In",
+    type: "time",
+  },
+  {
+    question: "Time Out",
+    type: "time",
+  },
+  {
+    question: "Question 1",
+    type: "time",
+  }, {
+    question: "Question 2",
+    type: "time",
+  },
+]

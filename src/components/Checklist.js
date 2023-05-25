@@ -1,72 +1,49 @@
 import { useState, useEffect } from "react";
 import Radio from "./Radio";
 import Input from "./Input";
-import {  RADIOQUESTIONS, INPUTFIELDS} from "../data";
-import ReviewForm from "./ReviewForm";
+import { FormData } from "../data";
 
 const styles = {
     hide: "hide",
     show: "show"
 }
 
-const Checklist = () => {
+const Checklist2 = () => {
 
-    useEffect(() => { }, []);
-
+    //State variable to control review component through a ternary
     const [isReview, setIsReviewed] = useState(false);
 
-    // const styles = clicked ? {display: "none"} : {display: "inline-block"};
-
+    //State variable for all inputs.
     const [checklist, setCheckList] = useState({
         input: [""],
         radio: [""],
+        images: [""],
     });
 
-    // One function to watch the changes for all input types.
+    // One function to watch the changes for all inputs.
     const handleChange = (e, index) => {
-        let newArray
+        let newArray;
         const { name, value } = e.target;
-
-        if (name === "textbox" || name === "team" || name === "manager") return setCheckList({ ...checklist, [name]: value });
-        if (name.includes("time")) return setCheckList({ ...checklist, [name]: value });
-
-        if (name === "empName") {
-            newArray = [...checklist.employees];
-            newArray[index].empName = value;
-            return setCheckList({ ...checklist, employees: newArray });
-        } else if (name === "title") {
-            newArray = [...checklist.employees];
-            newArray[index].title = value;
-            return setCheckList({ ...checklist, employees: newArray })
-        } else if (name === "consent") {
-            newArray = [...checklist.employees];
-            newArray[index].consent = value;
-            return setCheckList({ ...checklist, employees: newArray })
-        } else if (name === "radio") {
-            newArray = [...checklist.radio];
-        } else if (name === "input") {
-            newArray = [...checklist.input];
-        }
+        newArray = [...checklist[name]];
         newArray[index] = value;
         setCheckList({ ...checklist, [name]: newArray });
     }
 
-    const handleChangeEmployee = (e, index) => {
-        const { name, value } = e.target;
-        setCheckList({ ...checklist, [name]: value });
-    }
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        const { name } = e.target
 
-    // Adds empty element into employees array for new input.
-    const handleAdd = (e) => {
-        e.preventDefault();
-        setCheckList({ ...checklist, employees: [...checklist.employees, { empName: "", title: "", consent: "" }] });
-    }
-
-    //Removes element from employees array.
-    const handleRemove = (e, index) => {
-        e.preventDefault();
-        const filteredArray = checklist.employees.filter((employee, i) => i !== index);
-        setCheckList({ ...checklist, employees: filteredArray });
+        if (file && file.type.substring(0, 5) === 'image') {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = () => {
+                // setIsLoading(false);
+                // setUploadBtn(true);
+                //Sets the name of the key based on the string that was passed in the props.
+                //This is for the userControllers to know which field to update in the Users db collection. 
+                setCheckList((prevData) => ({ ...prevData, images: [...checklist.images, reader.result] }));
+            }
+        }
     }
 
     //Displays review component.
@@ -75,84 +52,49 @@ const Checklist = () => {
         setIsReviewed(!isReview);
     }
 
-    // Maps through the employees and creates an input component.
-    // const mappedEmployees = checklist.employees.map((employee, index) =>
-    //     <div key={index}>
-    //         <Input
-    //             labelName="Employee:"
-    //             index={index}
-    //             type="text"
-    //             forName="employeesField"
-    //             name="empName"
-    //             value={checklist.employees[index].empName}
-    //             handleChange={handleChange}
-    //         />
-    //         <Input
-    //             labelName="Title:"
-    //             index={index}
-    //             type="text"
-    //             forName="employeesField"
-    //             name="title"
-    //             value={checklist.employees[index].title}
-    //             handleChange={handleChange}
-    //         />
-    //         <p>
-    //             Acknowledgement: by clicking "yes" on the acknowledgment box, I hereby confirm that the information provided above is accurate, correct and can be used by the company at the company's descretion.
-    //         </p>
-    //         <Input
-    //             labelName="Acknowledgement:"
-    //             index={index}
-    //             type="checkbox"
-    //             forName="employeesField"
-    //             name="consent"
-    //             value="yes"
-    //             handleChange={handleChange}
-    //         />
-    //         <button className="btnLeft" onClick={(e) => handleRemove(e, index)}>Remove</button>
-    //     </div>
-
-    // );
-
     // Maps through the array and creates an input component with the array element.
-    const mappedInputs = INPUTFIELDS.map((inputName, index) =>
-        <div key={index}>
-            <Input
-                labelName={inputName}
-                index={index}
-                value={checklist.input[index] ? checklist.input[index] : ""}
-                type={inputName === "Date" ? "date" : "text"}
-                forName="inputField"
-                name="input"
-                handleChange={handleChange}
-            />
-            <br />
-        </div>
-
-    );
-
-    const mappedRadio = RADIOQUESTIONS.map((question, index) =>
-        <div key={index}>
-            <Radio
-                radioQuestion={question}
-                index={index}
-                handleChange={handleChange}
-            />
-            <br />
-        </div>
+    const mappedInputs = FormData.map((data, index) => {
+        return data.type === "input" || data.type === "date" || data.type === "time" ? (
+            <div key={index}>
+                <Input
+                    labelName={data.question}
+                    index={index}
+                    value={checklist.input[index] ? checklist.input[index] : ""}
+                    type={data.type}
+                    forName="data"
+                    name="input"
+                    handleChange={handleChange}
+                />
+                <br />
+            </div>
+        ) :
+            <div key={index}>
+                <Radio
+                    radioQuestion={data.question}
+                    index={index}
+                    handleChange={handleChange}
+                />
+                <input
+                    type="file"
+                    name="images"
+                    accept="/image/*"
+                    onChange={(e) => handleImageChange(e, index)}
+                />
+                <br />
+            </div>
+    }
     );
 
     return (
         <div className="flex center column form">
             <form onSubmit={(e) => review(e)} className={isReview ? styles.hide : styles.show}>
+                <h1>Inputs</h1>
                 {mappedInputs}
-                <h2>Radio Questions</h2>
-                {mappedRadio}
-                <br />
                 <button>Review</button>
             </form>
-            {isReview ? <ReviewForm checklist={checklist} review={review} /> : ""}
+            {/* {isReview ? <ReviewForm checklist={checklist} setChecklist={setCheckList} review={review} /> : ""} */}
         </div>
     );
 }
 
-export default Checklist;
+export default Checklist2;
