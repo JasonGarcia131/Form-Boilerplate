@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 export const FormData = [
   {
     question: "Date",
@@ -14,17 +13,13 @@ export const FormData = [
   },
   {
     question: "Question 1",
-    type: "time",
+    type: "input",
   }, {
     question: "Question 2",
-    type: "time",
+    type: "input",
+  },
+  {
+    question: "Question 3",
+    type: "radio",
   },
 ]
-=======
-export const RADIOQUESTIONS = [
-  "Radio question 1"
-    ];
-export const INPUTFIELDS = [
-  "Input 1"
-];
->>>>>>> da9fd27dc5497b2bc9a0c7721110a3f922b69027

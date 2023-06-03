@@ -8,7 +8,7 @@ const styles = {
     show: "show"
 }
 
-const Checklist2 = () => {
+const Checklist = () => {
 
     //State variable to control review component through a ternary
     const [isReview, setIsReviewed] = useState(false);
@@ -16,7 +16,6 @@ const Checklist2 = () => {
     //State variable for all inputs.
     const [checklist, setCheckList] = useState({
         input: [""],
-        radio: [""],
         images: [""],
     });
 
@@ -24,7 +23,7 @@ const Checklist2 = () => {
     const handleChange = (e, index) => {
         let newArray;
         const { name, value } = e.target;
-        newArray = [...checklist[name]];
+        newArray = [...checklist.input];
         newArray[index] = value;
         setCheckList({ ...checklist, [name]: newArray });
     }
@@ -54,20 +53,7 @@ const Checklist2 = () => {
 
     // Maps through the array and creates an input component with the array element.
     const mappedInputs = FormData.map((data, index) => {
-        return data.type === "input" || data.type === "date" || data.type === "time" ? (
-            <div key={index}>
-                <Input
-                    labelName={data.question}
-                    index={index}
-                    value={checklist.input[index] ? checklist.input[index] : ""}
-                    type={data.type}
-                    forName="data"
-                    name="input"
-                    handleChange={handleChange}
-                />
-                <br />
-            </div>
-        ) :
+        return data.type === 'radio' ? (
             <div key={index}>
                 <Radio
                     radioQuestion={data.question}
@@ -82,6 +68,20 @@ const Checklist2 = () => {
                 />
                 <br />
             </div>
+        ) : (
+            <div key={index}>
+                <Input
+                    labelName={data.question}
+                    index={index}
+                    value={checklist.input[index] ? checklist.input[index] : ""}
+                    type={data.type}
+                    forName="data"
+                    name="input"
+                    handleChange={handleChange}
+                />
+                <br />
+            </div>
+        )
     }
     );
 
@@ -97,4 +97,4 @@ const Checklist2 = () => {
     );
 }
 
-export default Checklist2;
+export default Checklist;
